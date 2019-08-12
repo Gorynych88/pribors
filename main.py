@@ -145,13 +145,26 @@ class CustomRectItem(QGraphicsRectItem):
     def __init__(self, name):
         super().__init__()
         self.name = name
+
+        self.setFlag(QGraphicsItem.ItemIsSelectable, True)
+        self.setFlag(QGraphicsItem.ItemIsFocusable, True)
+
         self.setAcceptHoverEvents(True)
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, mouseEvent):
         print(self.name)
-        # window_find_result = FindResultWindow()
-        # window_find_result.show()
-        super(CustomRectItem, self).mousePressEvent(event)
+
+        msg_view = MyMessageBox()
+        msg_view.setIcon(QMessageBox.Information)
+        # msg_add.setIconPixmap(pixmap)  # Своя картинка
+
+        msg_view.setWindowTitle("Информация")
+        msg_view.setText("Приборы не найдены")
+        msg_view.setInformativeText("В базе данных нет информации о приборах")
+        # msg_add.setDetailedText("DetailedText")
+        msg_view.exec()
+        super().mousePressEvent(mouseEvent)
+
 
     def mouseReleaseEvent(self, event):
         pass
@@ -180,6 +193,17 @@ class CustomPolygonItem(QGraphicsPolygonItem):
     def mousePressEvent(self, event):
         print(self.name)
 
+        msg_view = MyMessageBox()
+        msg_view.setIcon(QMessageBox.Information)
+        # msg_add.setIconPixmap(pixmap)  # Своя картинка
+
+        msg_view.setWindowTitle("Информация")
+        msg_view.setText("Приборы не найдены")
+        msg_view.setInformativeText("В базе данных нет информации о приборах")
+        # msg_add.setDetailedText("DetailedText")
+        msg_view.exec()
+        super().mousePressEvent(mouseEvent)
+
     def mouseReleaseEvent(self, event):
         pass
         # print('mouseReleaseEvent')
@@ -207,6 +231,17 @@ class CustomEllipseItem(QGraphicsEllipseItem):
     def mousePressEvent(self, event):
         print(self.name)
 
+        msg_view = MyMessageBox()
+        msg_view.setIcon(QMessageBox.Information)
+        # msg_add.setIconPixmap(pixmap)  # Своя картинка
+
+        msg_view.setWindowTitle("Информация")
+        msg_view.setText("Приборы не найдены")
+        msg_view.setInformativeText("В базе данных нет информации о приборах")
+        # msg_add.setDetailedText("DetailedText")
+        msg_view.exec()
+        super().mousePressEvent(mouseEvent)
+    
     def mouseReleaseEvent(self, event):
         pass
         # print('mouseReleaseEvent')
