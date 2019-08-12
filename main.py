@@ -1,8 +1,7 @@
 
 import sys
 import sqlite3
-from PyQt5 import QtGui, QtCore
-from PyQt5 import QtWidgets
+from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QGraphicsScene, QGraphicsView, QGraphicsItem, QMessageBox, QGraphicsRectItem, QGraphicsPolygonItem, QGraphicsEllipseItem
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
