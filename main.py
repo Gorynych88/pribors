@@ -145,20 +145,25 @@ class CustomRectItem(QGraphicsRectItem):
     def __init__(self, name):
         super().__init__()
         self.name = name
+        self.db = db
 
         self.setFlag(QGraphicsItem.ItemIsSelectable, True)
         self.setFlag(QGraphicsItem.ItemIsFocusable, True)
 
         self.setAcceptHoverEvents(True)
 
+    def select_rect(self, name):
+        self.db.select_data_to_place(name)
+
     def mousePressEvent(self, mouseEvent):
         print(self.name)
+        self.select_rect(self.name)
 
         msg_view = MyMessageBox()
         msg_view.setIcon(QMessageBox.Information)
         # msg_add.setIconPixmap(pixmap)  # Своя картинка
 
-        msg_view.setWindowTitle("Информация")
+        msg_view.setWindowTitle(self.name)
         msg_view.setText("Приборы не найдены")
         msg_view.setInformativeText("В базе данных нет информации о приборах")
         # msg_add.setDetailedText("DetailedText")
@@ -166,19 +171,19 @@ class CustomRectItem(QGraphicsRectItem):
         super().mousePressEvent(mouseEvent)
 
 
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, mouseEvent):
         pass
         # print('mouseReleaseEvent')
 
-    def hoverMoveEvent(self, event):
+    def hoverMoveEvent(self, mouseEvent):
         pass
         # print('hoverMoveEvent')
 
-    def hoverLeaveEvent(self, event):
+    def hoverLeaveEvent(self, mouseEvent):
         pass
         # print('hoverLeaveEvent')
 
-    def hoverEnterEvent(self, event):
+    def hoverEnterEvent(self, mouseEvent):
         pass
         # print('hoverEnterEvent')
 #------------------------------------------------------------------------------
@@ -188,35 +193,42 @@ class CustomPolygonItem(QGraphicsPolygonItem):
     def __init__(self, name):
         super().__init__()
         self.name = name
+        self.db = db
         self.setAcceptHoverEvents(True)
 
-    def mousePressEvent(self, event):
+
+    def select_polygon(self, name):
+        self.db.select_data_to_place(name)
+
+
+    def mousePressEvent(self, mouseEvent):
         print(self.name)
+        self.select_polygon(self.name)
 
         msg_view = MyMessageBox()
         msg_view.setIcon(QMessageBox.Information)
         # msg_add.setIconPixmap(pixmap)  # Своя картинка
 
-        msg_view.setWindowTitle("Информация")
+        msg_view.setWindowTitle(self.name)
         msg_view.setText("Приборы не найдены")
         msg_view.setInformativeText("В базе данных нет информации о приборах")
         # msg_add.setDetailedText("DetailedText")
         msg_view.exec()
         super().mousePressEvent(mouseEvent)
 
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, mouseEvent):
         pass
         # print('mouseReleaseEvent')
 
-    def hoverMoveEvent(self, event):
+    def hoverMoveEvent(self, mouseEvent):
         pass
         # print('hoverMoveEvent')
 
-    def hoverLeaveEvent(self, event):
+    def hoverLeaveEvent(self, mouseEvent):
         pass
         # print('hoverLeaveEvent')
 
-    def hoverEnterEvent(self, event):
+    def hoverEnterEvent(self, mouseEvent):
         pass
         # print('hoverEnterEvent')
 #------------------------------------------------------------------------------
@@ -226,35 +238,41 @@ class CustomEllipseItem(QGraphicsEllipseItem):
     def __init__(self, name):
         super().__init__()
         self.name = name
+        self.db = db
         self.setAcceptHoverEvents(True)
 
-    def mousePressEvent(self, event):
+
+    def select_ellipse(self, name):
+        self.db.select_data_to_place(name)
+
+    def mousePressEvent(self, mouseEvent):
         print(self.name)
+        self.select_ellipse(self.name)
 
         msg_view = MyMessageBox()
         msg_view.setIcon(QMessageBox.Information)
         # msg_add.setIconPixmap(pixmap)  # Своя картинка
 
-        msg_view.setWindowTitle("Информация")
+        msg_view.setWindowTitle(self.name)
         msg_view.setText("Приборы не найдены")
         msg_view.setInformativeText("В базе данных нет информации о приборах")
         # msg_add.setDetailedText("DetailedText")
         msg_view.exec()
         super().mousePressEvent(mouseEvent)
     
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, mouseEvent):
         pass
         # print('mouseReleaseEvent')
 
-    def hoverMoveEvent(self, event):
+    def hoverMoveEvent(self, mouseEvent):
         pass
         # print('hoverMoveEvent')
 
-    def hoverLeaveEvent(self, event):
+    def hoverLeaveEvent(self, mouseEvent):
         pass
         # print('hoverLeaveEvent')
 
-    def hoverEnterEvent(self, event):
+    def hoverEnterEvent(self, mouseEvent):
         pass
         # print('hoverEnterEvent')
 #------------------------------------------------------------------------------
@@ -281,7 +299,7 @@ class CustomScene(QGraphicsScene):
         cl_st.setBrush(Qt.green)
         self.addItem(cl_st)
 
-        reag_st_3 = CustomRectItem('Реагентное хозяйство №3')
+        reag_st_3 = CustomRectItem('Реагентное хозяйство')
         reag_st_3.setRect(65, 523, 45, 110)
         reag_st_3.setBrush(Qt.green)
         self.addItem(reag_st_3)
@@ -296,7 +314,7 @@ class CustomScene(QGraphicsScene):
         n_st_38_2.setBrush(Qt.green)
         self.addItem(n_st_38_2)
 
-        n_st_38_1 = CustomRectItem('38-2 насосная станция')
+        n_st_38_1 = CustomRectItem('38-1 насосная станция')
         n_st_38_1.setRect(208, 619, 45, 35)
         n_st_38_1.setBrush(Qt.green)
         self.addItem(n_st_38_1)
@@ -311,17 +329,17 @@ class CustomScene(QGraphicsScene):
         n_st_21.setBrush(Qt.green)
         self.addItem(n_st_21)
 
-        res_1500_st_21 = CustomRectItem('Резервуар 1500 насосная станция 21')
+        res_1500_st_21 = CustomRectItem('Резервуар 1500 м3 21 насосная станция')
         res_1500_st_21.setRect(349, 138, 20, 30)
         res_1500_st_21.setBrush(Qt.green)
         self.addItem(res_1500_st_21)
 
-        res_750_st_21 = CustomEllipseItem('Резервуар 750 насосная станция 21')
+        res_750_st_21 = CustomEllipseItem('Резервуар 750 м3 21 насосная станция')
         res_750_st_21.setRect(385, 142, 25, 25)
         res_750_st_21.setBrush(Qt.green)
         self.addItem(res_750_st_21)
 
-        res_2200_st_21 = CustomEllipseItem('Резервуар 2200 насосная станция 21')
+        res_2200_st_21 = CustomEllipseItem('Резервуар 2200 м3 21 насосная станция')
         res_2200_st_21.setRect(283, 174, 40, 40)
         res_2200_st_21.setBrush(Qt.green)
         self.addItem(res_2200_st_21)
@@ -332,37 +350,37 @@ class CustomScene(QGraphicsScene):
         << QPointF(348, 333) << QPointF(348, 302) << QPointF(340, 302) \
         << QPointF(340, 333) << QPointF(324, 333) << QPointF(324, 302) \
         << QPointF(314, 302) << QPointF(314, 333) << QPointF(295, 333)
-        bl_1 = CustomPolygonItem('1 блок')
+        bl_1 = CustomPolygonItem('Блок 1')
         bl_1.setPolygon(polygon_bl_1)
         bl_1.setBrush(Qt.green)
         self.addItem(bl_1)
 
-        bl_2 = CustomRectItem('2 блок')
+        bl_2 = CustomRectItem('Блок 2')
         bl_2.setRect(487, 255, 150, 85)
         bl_2.setBrush(Qt.green)
         self.addItem(bl_2)
 
-        bl_4 = CustomRectItem('4 блок')
+        bl_4 = CustomRectItem('Блок 4')
         bl_4.setRect(294, 436, 160, 70)
         bl_4.setBrush(Qt.green)
         self.addItem(bl_4)
 
-        bl_5 = CustomRectItem('5 блок')
+        bl_5 = CustomRectItem('Блок 5')
         bl_5.setRect(293, 540, 160, 70)
         bl_5.setBrush(Qt.green)
         self.addItem(bl_5)
 
-        bl_3 = CustomRectItem('3 блок')
+        bl_3 = CustomRectItem('Блок 3')
         bl_3.setRect(489, 436, 150, 135)
         bl_3.setBrush(Qt.green)
         self.addItem(bl_3)
 
-        res_7000_1 = CustomRectItem('Резервуар 7000-1')
+        res_7000_1 = CustomRectItem('Резервуар 7000-1 м3 2 блок')
         res_7000_1.setRect(501, 156, 55, 45)
         res_7000_1.setBrush(Qt.green)
         self.addItem(res_7000_1)
 
-        res_7000_2 = CustomRectItem('Резервуар 7000-2')
+        res_7000_2 = CustomRectItem('Резервуар 7000-2 м3 2 блок')
         res_7000_2.setRect(558, 156, 55, 45)
         res_7000_2.setBrush(Qt.green)
         self.addItem(res_7000_2)
@@ -370,7 +388,7 @@ class CustomScene(QGraphicsScene):
         polygon_res_3000_st_37 = QPolygonF()
         polygon_res_3000_st_37 << QPointF(766, 130) << QPointF(817, 92) \
                                << QPointF(839, 122) << QPointF(788, 160)
-        res_3000_st_37 = CustomPolygonItem('Резервуар 3000 насосная станция 37')
+        res_3000_st_37 = CustomPolygonItem('Резервуар 3000 м3 37 насосная станция')
         res_3000_st_37.setPolygon(polygon_res_3000_st_37)
         res_3000_st_37.setBrush(Qt.green)
         self.addItem(res_3000_st_37)
@@ -386,22 +404,22 @@ class CustomScene(QGraphicsScene):
         polygon_res_1000_st_37 = QPolygonF()
         polygon_res_1000_st_37 << QPointF(823, 195) << QPointF(862, 167) \
                                << QPointF(877, 187) << QPointF(838, 215)
-        res_1000_st_37 = CustomPolygonItem('Резервуар 1000 насосная станция 37')
+        res_1000_st_37 = CustomPolygonItem('Резервуар 1000 м3 37 насосная станция')
         res_1000_st_37.setPolygon(polygon_res_1000_st_37)
         res_1000_st_37.setBrush(Qt.green)
         self.addItem(res_1000_st_37)
 
-        res_10000_3 = CustomRectItem('Резервуар 10000 №3')
+        res_10000_3 = CustomRectItem('Резервуар 10000 м3 №3')
         res_10000_3.setRect(705, 250, 55, 115)
         res_10000_3.setBrush(Qt.green)
         self.addItem(res_10000_3)
 
-        res_10000_2 = CustomRectItem('Резервуар 10000 №2')
+        res_10000_2 = CustomRectItem('Резервуар 10000 м3 №2')
         res_10000_2.setRect(705, 389, 85, 80)
         res_10000_2.setBrush(Qt.green)
         self.addItem(res_10000_2)
 
-        res_10000_1 = CustomRectItem('Резервуар 10000 №1')
+        res_10000_1 = CustomRectItem('Резервуар 10000 м3 №1')
         res_10000_1.setRect(705, 479, 85, 80)
         res_10000_1.setBrush(Qt.green)
         self.addItem(res_10000_1)
@@ -661,22 +679,24 @@ class FindResultWindow(QtWidgets.QMainWindow, find_result_window.Ui_FindResultWi
 class DB:
     def __init__(self):
         self.conn = sqlite3.connect('pribors.db')
-        self.c = self.conn.cursor()
-        self.c.execute(
+        self.cursor = self.conn.cursor()
+        self.cursor.execute(
             '''CREATE TABLE IF NOT EXISTS pribors (id integer primary key, description text, type text, number text,
             place text, year text, data text, data_next text)''')
         self.conn.commit()
 
+
     def insert_data(self, description, type_device, number, place, year, data, data_next):
-       self.c.execute('''INSERT INTO pribors(description, type, number, place, year, data, data_next) VALUES (?, ?, ?, ?, ?, ?, ?)''',
+       self.cursor.execute('''INSERT INTO pribors(description, type, number, place, year, data, data_next) VALUES (?, ?, ?, ?, ?, ?, ?)''',
                       (description, type_device, number, place, year, data, data_next))
        self.conn.commit()
 
-
-
-        #ellipse.setFlag(QGraphicsItem.ItemIsMovable)
-        #rect.setFlag(QGraphicsItem.ItemIsMovable)
-        #ellipse.setFlag(QGraphicsItem.ItemIsSelectable)
+    def select_data_to_place(self, name):
+        self.cursor.execute("SELECT * FROM pribors WHERE place=?", (name, ))
+        items = self.cursor.fetchall()
+        for i in items:
+            print("Прибор: {description} Заводской №: {number} Год выпуска: {year}".format(description=i[1], number=i[3], year=i[5]))
+        # print(items)
 
 
 if __name__ == '__main__':
