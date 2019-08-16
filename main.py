@@ -86,7 +86,7 @@ class AddWindow(QtWidgets.QMainWindow, add_window.Ui_AddWindow):
         place = self.comboBoxPlace.currentText()
         temp_year = self.dateEditYear.date()
         year = temp_year.toPyDate()
-        # year_temp = QtCore.QDate.fromString(year_topydate, 'yyyy')
+        # year_temp = QtCore.QDate.fromString(self.dateEditYear, 'yyyy')
         # year = year_temp.yaer()
         temp_data = self.dateEditPov.date()
         data = temp_data.toPyDate()
@@ -156,20 +156,7 @@ class CustomRectItem(QGraphicsRectItem):
         self.db.select_data_to_place(name)
 
     def mousePressEvent(self, mouseEvent):
-        print(self.name)
         self.select_rect(self.name)
-
-        msg_view = MyMessageBox()
-        msg_view.setIcon(QMessageBox.Information)
-        # msg_add.setIconPixmap(pixmap)  # Своя картинка
-
-        msg_view.setWindowTitle(self.name)
-        msg_view.setText("Приборы не найдены")
-        msg_view.setInformativeText("В базе данных нет информации о приборах")
-        # msg_add.setDetailedText("DetailedText")
-        msg_view.exec()
-        super().mousePressEvent(mouseEvent)
-
 
     def mouseReleaseEvent(self, mouseEvent):
         pass
@@ -202,19 +189,7 @@ class CustomPolygonItem(QGraphicsPolygonItem):
 
 
     def mousePressEvent(self, mouseEvent):
-        print(self.name)
         self.select_polygon(self.name)
-
-        msg_view = MyMessageBox()
-        msg_view.setIcon(QMessageBox.Information)
-        # msg_add.setIconPixmap(pixmap)  # Своя картинка
-
-        msg_view.setWindowTitle(self.name)
-        msg_view.setText("Приборы не найдены")
-        msg_view.setInformativeText("В базе данных нет информации о приборах")
-        # msg_add.setDetailedText("DetailedText")
-        msg_view.exec()
-        super().mousePressEvent(mouseEvent)
 
     def mouseReleaseEvent(self, mouseEvent):
         pass
@@ -246,19 +221,7 @@ class CustomEllipseItem(QGraphicsEllipseItem):
         self.db.select_data_to_place(name)
 
     def mousePressEvent(self, mouseEvent):
-        print(self.name)
         self.select_ellipse(self.name)
-
-        msg_view = MyMessageBox()
-        msg_view.setIcon(QMessageBox.Information)
-        # msg_add.setIconPixmap(pixmap)  # Своя картинка
-
-        msg_view.setWindowTitle(self.name)
-        msg_view.setText("Приборы не найдены")
-        msg_view.setInformativeText("В базе данных нет информации о приборах")
-        # msg_add.setDetailedText("DetailedText")
-        msg_view.exec()
-        super().mousePressEvent(mouseEvent)
     
     def mouseReleaseEvent(self, mouseEvent):
         pass
@@ -694,9 +657,23 @@ class DB:
     def select_data_to_place(self, name):
         self.cursor.execute("SELECT * FROM pribors WHERE place=?", (name, ))
         items = self.cursor.fetchall()
+        list_elem = []
         for i in items:
-            print("Прибор: {description} Заводской №: {number} Год выпуска: {year}".format(description=i[1], number=i[3], year=i[5]))
-        # print(items)
+            list_elem.append("Прибор: {description} Заводской №: {number} Год выпуска: {year}".format(description=i[1], number=i[3], year=i[5][:4])\
+                             + "\n -------------------------------------------------------")
+        string_list_elem = '\n'.join(list_elem)
+
+
+
+        msg_view = MyMessageBox()
+        msg_view.setIcon(QMessageBox.Information)
+        # msg_add.setIconPixmap(pixmap)  # Своя картинка
+
+        msg_view.setWindowTitle(name)
+        msg_view.setText(string_list_elem)
+        # msg_view.setInformativeText("В базе данных нет информации о приборах")
+        # msg_add.setDetailedText("DetailedText")
+        msg_view.exec()
 
 
 if __name__ == '__main__':
