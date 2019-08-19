@@ -7,6 +7,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.Qt import Qt
 
+sys.path.append("./Design")
 import main_window
 import add_window
 import find_window
@@ -20,7 +21,7 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.setupUi(self)
         self.btnAdd.clicked.connect(self.showAddWindow)
         self.dialog_add = AddWindow(self)
-        self.btnFind.clicked.connect(self.showFindWindow)
+        self.btnFindWindow.clicked.connect(self.showFindWindow)
         self.dialog_find = FindWindow(self)
 
     def showAddWindow(self):
@@ -419,7 +420,37 @@ class FindWindow(QtWidgets.QMainWindow, find_window.Ui_FindWindow):
         self.setupUi(self)
         self.createGraphicView()
         self.comboBoxFindWindowInit()
+        self.btnFind.clicked.connect(self.showFindWindow)
+        self.dialog_find = FindResultWindow(self)
 
+
+    def showFindWindow(self):
+        self.dialog_find.show()
+
+        place = self.comboBoxPlaceFind.currentText()
+        type_dev = self.comboBoxTypeFind.currentText()
+        year_dev = self.comboBoxYearFind.currentText()
+        name_dev = self.lineEditNameFind.text()
+
+        self.dialog_find.listWidgetFindResult.clear()
+        conn = sqlite3.connect('pribors.db')
+        cursor = conn.cursor()
+        if place.isalnum() and type_dev.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE place=? AND type=?", (place, type_dev))
+        elif place.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE place=?", place)
+        elif type_dev.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE type=?", type_dev)
+
+        result_find = cursor.fetchall()
+        list_elem_find = []
+
+        for i in result_find:
+            list_elem_find.append("Прибор: {description} Заводской №: {number} Год выпуска: {year}".format(description=i[1], number=i[3], year=i[5][:4]))
+
+ 
+        for item in list_elem_find:
+            self.dialog_find.listWidgetFindResult.addItem(item)
 
 
     def createGraphicView(self):
@@ -556,14 +587,16 @@ class FindWindow(QtWidgets.QMainWindow, find_window.Ui_FindWindow):
 
 
     def comboBoxFindWindowInit(self):
-        self.comboBoxTypeFind.addItems(['Расходомер ультразвуковой',
+        self.comboBoxTypeFind.addItems(['',
+                                        'Расходомер ультразвуковой',
                                         'Расходомер электромагнитный',
                                         'Уровнемер погружной',
                                         'Расходомер вихревой',
                                         'Уровнемер ультразвуковой',
                                         'Датчик давления',
                                         'Манометр'])
-        self.comboBoxPlaceFind.addItems(['12 насосная станция',
+        self.comboBoxPlaceFind.addItems(['',
+                                         '12 насосная станция',
                                          '13 насосная станция',
                                          '21 насосная станция',
                                          '22 насосная станция',
@@ -593,7 +626,8 @@ class FindWindow(QtWidgets.QMainWindow, find_window.Ui_FindWindow):
                                          'Резервуар 10000 м3 №2',
                                          'Резервуар 10000 м3 №3'])
 
-        self.comboBoxYearFind.addItems(['1990',
+        self.comboBoxYearFind.addItems(['',
+                                        '1990',
                                         '1991',
                                         '1992',
                                         '1993',
@@ -633,10 +667,6 @@ class FindResultWindow(QtWidgets.QMainWindow, find_result_window.Ui_FindResultWi
     def __init__(self, parent=None):
         super(FindResultWindow, self).__init__(parent)
         self.setupUi(self)
-        self.dialog_find_result = FindResultWindow(self)
-
-    # def showFindResultWindow(self):
-    #     self.dialog_find_result.show()
 
 
 class DB:
