@@ -82,6 +82,7 @@ class AddWindow(QtWidgets.QMainWindow, add_window.Ui_AddWindow):
 
     def records(self):
         description = self.lineEditName.text()
+        description_no_space = description.replace(' ', '')
         type_device = self.comboBoxType.currentText()
         number = self.lineEditNumber.text()
         place = self.comboBoxPlace.currentText()
@@ -94,7 +95,7 @@ class AddWindow(QtWidgets.QMainWindow, add_window.Ui_AddWindow):
         temp_data_next = self.dateEditNextPov.date()
         data_next = temp_data_next.toPyDate()
 
-        self.db.insert_data(description, type_device, number, place, year, data, data_next)
+        self.db.insert_data(description_no_space, type_device, number, place, year, data, data_next)
 
 
         msg_add = MyMessageBox()
@@ -427,31 +428,56 @@ class FindWindow(QtWidgets.QMainWindow, find_window.Ui_FindWindow):
     def showFindWindow(self):
         self.dialog_find.show()
 
-        place = self.comboBoxPlaceFind.currentText()
+        place_dev = self.comboBoxPlaceFind.currentText()
         type_dev = self.comboBoxTypeFind.currentText()
         year_dev = self.comboBoxYearFind.currentText()
         name_dev = self.lineEditNameFind.text()
 
+        place_dev_pr = place_dev.replace(' ', '')
+        type_dev_pr = type_dev.replace(' ', '')
+        year_dev_pr = year_dev + '-01-01'
+        name_dev_pr = name_dev.replace(' ', '').upper()
+        no_find_text = "Приборы не найдены!"
+
         self.dialog_find.listWidgetFindResult.clear()
         conn = sqlite3.connect('pribors.db')
         cursor = conn.cursor()
-        if place.isalnum() and type_dev.isalnum():
-            cursor.execute("SELECT * FROM pribors WHERE place=? AND type=?", (place, type_dev))
-        elif place.isalnum():
-            cursor.execute("SELECT * FROM pribors WHERE place=?", place)
-        elif type_dev.isalnum():
-            cursor.execute("SELECT * FROM pribors WHERE type=?", type_dev)
-
+        if place_dev_pr.isalnum():    
+            cursor.execute("SELECT * FROM pribors WHERE place=?", (place_dev, ))
+        if type_dev_pr.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE type=?", (type_dev, ))
+        if year_dev.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE year=?", (year_dev_pr, ))
+        if name_dev_pr.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE description=?", (name_dev_pr, ))
+        if place_dev_pr.isalnum() and type_dev_pr.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE place=? AND type=?", (place_dev, type_dev))
+        if place_dev_pr.isalnum() and name_dev_pr.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE place=? AND description=?", (place_dev, name_dev_pr))
+        if year_dev.isalnum() and name_dev_pr.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE year=? AND description=?", (year_dev_pr, name_dev_pr))
+        if type_dev_pr.isalnum() and name_dev_pr.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE type=? AND description=?", (type_dev, name_dev_pr))
+        if place_dev_pr.isalnum() and type_dev_pr.isalnum() and year_dev.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE place=? AND type=? AND year=?", (place_dev, type_dev, year_dev_pr))
+        if place_dev_pr.isalnum() and type_dev_pr.isalnum() and year_dev.isalnum() and name_dev_pr.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE type=? AND year=? AND description=?", (type_dev, year_dev_pr, name_dev_pr))
+        if place_dev_pr.isalnum() and type_dev_pr.isalnum() and year_dev.isalnum() and name_dev_pr.isalnum():
+            cursor.execute("SELECT * FROM pribors WHERE place=? AND type=? AND year=? AND description=?", (place_dev, type_dev, year_dev_pr, name_dev_pr))
         result_find = cursor.fetchall()
         list_elem_find = []
 
         for i in result_find:
-            list_elem_find.append("Прибор: {description} Заводской №: {number} Год выпуска: {year}".format(description=i[1], number=i[3], year=i[5][:4]))
+            list_elem_find.append("Прибор: {description} Заводской №: {number} Год выпуска: {year} Место установки: {place}".format(description=i[1], number=i[3], year=i[5][:4], place=i[4]))
 
  
         for item in list_elem_find:
             self.dialog_find.listWidgetFindResult.addItem(item)
 
+        # print(place_dev_pr.isalnum() and type_dev_pr.isalnum())
+        # print(place_dev_pr.isalnum())
+        # print(type_dev_pr.isalnum())
+        # print(year_dev_pr.isalnum())
 
     def createGraphicView(self):
         self.scene = CustomScene(self)
