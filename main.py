@@ -10,6 +10,7 @@ from PyQt5.Qt import Qt
 sys.path.append("./Design")
 import main_window
 import add_window
+import edit_window
 import find_window
 import find_result_window
 
@@ -684,8 +685,8 @@ class FindWindow(QtWidgets.QMainWindow, find_window.Ui_FindWindow):
                                         '2018',
                                         '2019'])
 
-    def comboboxFindWindowInit(self):
-        pass
+    # def comboboxFindWindowInit(self):
+    #     pass
 
 
 class FindResultWindow(QtWidgets.QMainWindow, find_result_window.Ui_FindResultWindow):
@@ -693,6 +694,24 @@ class FindResultWindow(QtWidgets.QMainWindow, find_result_window.Ui_FindResultWi
     def __init__(self, parent=None):
         super(FindResultWindow, self).__init__(parent)
         self.setupUi(self)
+
+        self.listWidgetFindResult.itemClicked.connect(self.edit_elem_find_result_window)
+
+        self.btnEdit.clicked.connect(self.showEditWindow)
+        self.dialog_edit = EditWindow(self)
+
+    def edit_elem_find_result_window(self):
+        self.btnEdit.setEnabled(True)
+
+    def showEditWindow(self):
+        self.dialog_edit.show()
+
+
+class EditWindow(QtWidgets.QMainWindow, edit_window.Ui_EditWindow):
+    def __init__(self, parent=None):
+        super(EditWindow, self).__init__(parent)
+        self.setupUi(self)
+        
 
 
 class DB:
