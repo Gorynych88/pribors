@@ -694,25 +694,38 @@ class FindResultWindow(QtWidgets.QMainWindow, find_result_window.Ui_FindResultWi
     def __init__(self, parent=None):
         super(FindResultWindow, self).__init__(parent)
         self.setupUi(self)
+        self.db = db
 
         self.listWidgetFindResult.itemClicked.connect(self.edit_elem_find_result_window)
 
         self.btnEdit.clicked.connect(self.showEditWindow)
         self.dialog_edit = EditWindow(self)
 
+
     def edit_elem_find_result_window(self):
         self.btnEdit.setEnabled(True)
 
     def showEditWindow(self):
         self.dialog_edit.show()
+        
+        ser_number = [str(x.text()).split(' ') for x in self.listWidgetFindResult.selectedItems()][0][4]
+        print(ser_number)
+
+        self.db.var_to_autofill_to_edit(ser_number)
+
 
 
 class EditWindow(QtWidgets.QMainWindow, edit_window.Ui_EditWindow):
     def __init__(self, parent=None):
         super(EditWindow, self).__init__(parent)
         self.setupUi(self)
-        
-
+        self.db = db
+        self.autofill_to_edit()
+    
+    def autofill_to_edit(self):
+        self.lineEditNameEdit.setText("Имя")
+        # self.labelNumberEdit.setText(FindResultWindow.showEditWindow.ser_number)   
+        # print(self.db.var_to_autofill_to_edit.name_to_edit)
 
 class DB:
     def __init__(self):
@@ -750,6 +763,16 @@ class DB:
         # msg_add.setDetailedText("DetailedText")
         msg_view.exec()
 
+    def var_to_autofill_to_edit(self, ser_number):
+        self.cursor.execute("SELECT * FROM pribors WHERE number=?", (ser_number, ))
+        item = self.cursor.fetchall()
+        name_to_edit = item[0][1]
+        type_device_to_edit = item[0][2]
+        number_to_edit = item[0][3]
+        place_to_edit = item[0][4]
+        year_to_edit = item[0][5]
+        data_poverki_to_edit = item[0][6]
+        data_next_poverki_to_edit = item[0][7]
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
