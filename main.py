@@ -699,33 +699,89 @@ class FindResultWindow(QtWidgets.QMainWindow, find_result_window.Ui_FindResultWi
         self.listWidgetFindResult.itemClicked.connect(self.edit_elem_find_result_window)
 
         self.btnEdit.clicked.connect(self.showEditWindow)
+        # self.btnEdit.clicked.connect(self.create_ser_number)
         self.dialog_edit = EditWindow(self)
-
-
+               
     def edit_elem_find_result_window(self):
         self.btnEdit.setEnabled(True)
 
+    def create_ser_number(self):
+        ser_number = [str(x.text()).split(' ') for x in self.listWidgetFindResult.selectedItems()][0][4]
+        return ser_number
+
     def showEditWindow(self):
         self.dialog_edit.show()
+        ser_number = self.create_ser_number()
+        self.dialog_edit.lineEditNameEdit.setText(self.db.var_to_autofill_name_to_edit(ser_number))
+
+        list_type_dev = ['',
+                        'Расходомер ультразвуковой',
+                        'Расходомер электромагнитный',
+                        'Уровнемер погружной',
+                        'Расходомер вихревой',
+                        'Уровнемер ультразвуковой',
+                        'Датчик давления',
+                        'Манометр']
+        type_device_to_edit_auto = self.db.var_to_autofill_type_device_to_edit(ser_number)
+        list_type_dev.remove(type_device_to_edit_auto)
+        self.dialog_edit.comboBoxTypeEdit.addItems(list_type_dev)
+        self.dialog_edit.comboBoxTypeEdit.setItemText(0, type_device_to_edit_auto)
+
+        self.dialog_edit.lineEditNumberEdit.setText(self.db.var_to_autofill_number_to_edit(ser_number))
         
-        ser_number = [str(x.text()).split(' ') for x in self.listWidgetFindResult.selectedItems()][0][4]
-        print(ser_number)
+        list_place_dev = ['',
+                         '12 насосная станция',
+                         '13 насосная станция',
+                         '21 насосная станция',
+                         '22 насосная станция',
+                         '23 насосная станция',
+                         'КП 1',
+                         'КП 2',
+                         'Хлорное хозяйство',
+                         'Реагентное хозяйство',
+                         'Блок 1',
+                         'Блок 2',
+                         'Блок 3',
+                         'Блок 4',
+                         'Блок 5',
+                         '38-1 насосная станция',
+                         '38-2 насосная станция',
+                         '37 насосная станция',
+                         '93 насосная станция',
+                         '17 насосная станция',
+                         'Резервуар 1000 м3 37 насосная станция',
+                         'Резервуар 3000 м3 37 насосная станция',
+                         'Резервуар 750 м3 21 насосная станция',
+                         'Резервуар 1500 м3 21 насосная станция',
+                         'Резервуар 2200 м3 21 насосная станция',
+                         'Резервуар 7000-1 м3 2 блок',
+                         'Резервуар 7000-2 м3 2 блок',
+                         'Резервуар 10000 м3 №1',
+                         'Резервуар 10000 м3 №2',
+                         'Резервуар 10000 м3 №3']
+        place_device_to_edit_auto = self.db.var_to_autofill_place_to_edit(ser_number)
+        list_place_dev.remove(place_device_to_edit_auto)
+        self.dialog_edit.comboBoxPlaceEdit.addItems(list_place_dev)
+        self.dialog_edit.comboBoxPlaceEdit.setItemText(0, place_device_to_edit_auto)    
+        
+        year = int(self.db.var_to_autofill_year_to_edit(ser_number)[0:4])
+        self.dialog_edit.dateEditYearEdit.setDate(QDate(year, 1, 1))
 
-        self.db.var_to_autofill_to_edit(ser_number)
+        year_pov = int(self.db.var_to_autofill_data_poverki_to_edit(ser_number)[0:4])
+        mon_pov = int(self.db.var_to_autofill_data_poverki_to_edit(ser_number)[5:7])
+        day_pov = int(self.db.var_to_autofill_data_poverki_to_edit(ser_number)[8:10])
+        self.dialog_edit.dateEditPovEdit.setDate(QDate(year_pov, mon_pov, day_pov))
 
-
+        year_next_pov = int(self.db.var_to_autofill_data_next_poverki_to_edit(ser_number)[0:4])
+        mon_next_pov = int(self.db.var_to_autofill_data_next_poverki_to_edit(ser_number)[5:7])
+        day_next_pov = int(self.db.var_to_autofill_data_next_poverki_to_edit(ser_number)[8:10])
+        self.dialog_edit.dateEditNextPovEdit.setDate(QDate(year_next_pov, mon_next_pov, day_next_pov))
 
 class EditWindow(QtWidgets.QMainWindow, edit_window.Ui_EditWindow):
     def __init__(self, parent=None):
         super(EditWindow, self).__init__(parent)
         self.setupUi(self)
-        self.db = db
-        self.autofill_to_edit()
-    
-    def autofill_to_edit(self):
-        self.lineEditNameEdit.setText("Имя")
-        # self.labelNumberEdit.setText(FindResultWindow.showEditWindow.ser_number)   
-        # print(self.db.var_to_autofill_to_edit.name_to_edit)
+
 
 class DB:
     def __init__(self):
@@ -763,16 +819,48 @@ class DB:
         # msg_add.setDetailedText("DetailedText")
         msg_view.exec()
 
-    def var_to_autofill_to_edit(self, ser_number):
+    def var_to_autofill_name_to_edit(self, ser_number):
         self.cursor.execute("SELECT * FROM pribors WHERE number=?", (ser_number, ))
         item = self.cursor.fetchall()
         name_to_edit = item[0][1]
+        return name_to_edit
+
+    def var_to_autofill_type_device_to_edit(self, ser_number):
+        self.cursor.execute("SELECT * FROM pribors WHERE number=?", (ser_number, ))
+        item = self.cursor.fetchall()
         type_device_to_edit = item[0][2]
+        return type_device_to_edit
+
+    def var_to_autofill_number_to_edit(self, ser_number):
+        self.cursor.execute("SELECT * FROM pribors WHERE number=?", (ser_number, ))
+        item = self.cursor.fetchall()
         number_to_edit = item[0][3]
+        return number_to_edit
+
+    def var_to_autofill_place_to_edit(self, ser_number):
+        self.cursor.execute("SELECT * FROM pribors WHERE number=?", (ser_number, ))
+        item = self.cursor.fetchall()
         place_to_edit = item[0][4]
+        return place_to_edit
+        
+    def var_to_autofill_year_to_edit(self, ser_number):
+        self.cursor.execute("SELECT * FROM pribors WHERE number=?", (ser_number, ))
+        item = self.cursor.fetchall()
         year_to_edit = item[0][5]
+        return year_to_edit
+
+    def var_to_autofill_data_poverki_to_edit(self, ser_number):
+        self.cursor.execute("SELECT * FROM pribors WHERE number=?", (ser_number, ))
+        item = self.cursor.fetchall()
         data_poverki_to_edit = item[0][6]
+        return data_poverki_to_edit
+
+    def var_to_autofill_data_next_poverki_to_edit(self, ser_number):
+        self.cursor.execute("SELECT * FROM pribors WHERE number=?", (ser_number, ))
+        item = self.cursor.fetchall()
         data_next_poverki_to_edit = item[0][7]
+        return data_next_poverki_to_edit
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
